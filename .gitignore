@@ -1,3 +1,6 @@
+# images
+*.png
+
 #
 .pre-commit-config.yaml
 .ruff_cache/

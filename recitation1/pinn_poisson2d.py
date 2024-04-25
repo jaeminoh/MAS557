@@ -115,7 +115,14 @@ def loss(params, xy_in, xy_b):
 
 
 nIter = 10000
+# if you want to use adam:
+# import optax
+# lr = optax.cosine_decay_schedule(1e-3, nIter)
+# opt = jaxopt.OptaxSolver(loss, optax.adam(lr), has_aux=True)
+
+# lbfgs
 opt = jaxopt.LBFGS(loss, has_aux=True)
+
 
 # initialize
 params = init(jr.PRNGKey(0))
