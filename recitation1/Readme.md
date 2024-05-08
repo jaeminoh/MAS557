@@ -57,7 +57,7 @@ Differential Equations and boundary condition:
 $$u_{xx}(x) = -\pi^2 \sin(\pi x) = f(x), \quad u(0) = u(1) = 0.$$
 
 Weak form:
-$$\int -u_{xx} v dx = \int -f v dx.$
+$$\int -u_{xx} v dx = \int -f v dx.$$
 Integration by parts (test function $v$ must satisfy $v(0) = v(1) = 0$:
 $$\int u_x v_x dx = \int -f v dx.$$
 Define
