@@ -17,26 +17,32 @@ import optax
 from nn import MLP
 
 
+# forcing term.
 def f(x, a):
     return -(jnp.pi**2) * jnp.sin(jnp.pi * x) * a
 
 
+# exact solution.
 def u(x, a):
     return a * np.sin(np.pi * x)
 
 
+# branch network and trunk network
 init_br, apply_br = MLP([1, 64, 64])
 init_tr, apply_tr = MLP([1, 64, 64])
 
 
+# trunk network
 def tr(params_t, x):
     return x * (1 - x) * apply_tr(params_t, jnp.atleast_1d(x)).squeeze()
 
 
+# branch network
 def br(params_b, a):
     return apply_br(params_b, jnp.atleast_1d(a)).squeeze()
 
 
+# deeponet: dot(br, tr)
 def onet(params, x, a):
     params_t, params_b = params
     t = tr(params_t, x)
@@ -44,6 +50,7 @@ def onet(params, x, a):
     return jnp.dot(t, b)
 
 
+# differentiation w.r.t. x
 def onet_x(params, x, a):
     return jax.jacfwd(onet, 1)(params, x, a)
 
@@ -52,10 +59,14 @@ def onet_xx(params, x, a):
     return jax.jacfwd(onet_x, 1)(params, x, a)
 
 
+# note that we are solving u_xx - f for various f
+# and f is parameterized with a.
 def _loss(params, x, a):
     return onet_xx(params, x, a) - f(x, a)
 
 
+# Note that the function _loss only takes scalar inputs.
+# By vmapping, we vectorize it.
 def loss(params, xx, aa):
     pde = jax.vmap(_loss, in_axes=(None, 0, 0))(params, xx, aa)
     loss = (pde**2).mean()
